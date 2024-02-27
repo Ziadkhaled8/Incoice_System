@@ -1,0 +1,51 @@
+﻿@model List<item>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="/Images/@item.image" class="card-img-top" alt="..." style="max-height: 200px;">
+                <div class="card-body">
+                    <h4 class="card-title">@item.itemName</h4>
+                    <h5 class="card-text">Price: @item.price</h5>
+                    <h5 class="card-text">Item ID: @item.itemId</h5>
+                    <h5 class="card-text">Balance : @item.balance</h5>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+<form id="addItemForm" asp-action="AddItem" method="post">
+    <div class="form-group">
+        <label for="itemId">Select Item:</label>
+        <select class="form-control" id="itemId" name="itemId">
+            @foreach (var item in Model)
+            {
+                <option value="@item.itemId"> @item.itemName - Price: @item.price</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="quantity">Quantity:</label>
+        <input type="number" class="form-control" id="quantity" name="quantity" required />
+        <span class="text-danger" id="quantityError" style="display: none;"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Item</button>
+</form>
+
+<script>
+    document.getElementById('addItemForm').addEventListener('submit', function (event) {
+        var quantityInput = document.getElementById('quantity');
+        var balance = parseInt('@Model.FirstOrDefault().balance'); // Assuming Balance is the balance attribute of the first item
+
+        if (parseInt(quantityInput.value) > balance) {
+            event.preventDefault(); // Prevent form submission
+            document.getElementById('quantityError').innerText = 'Quantity cannot exceed the balance for this item.'; // Set error message
+            document.getElementById('quantityError').style.display = 'block'; // Display error message
+        }
+    });
+</script>
